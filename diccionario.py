@@ -18,12 +18,36 @@ meme_dict = {
 
 @client.event
 async def on_ready():
-    print(f'Hemos iniciado sesión como {client.user}')
+    print(f'✅ Bot conectado como {client.user}')
 
 @client.event
 async def on_message(message):
     if message.author == client.user:
         return
+
+    # --- SUMAS tipo "$5 + 8" ---
+    if message.content.startswith("$") and "+" in message.content:
+        try:
+            # Quitar el símbolo $
+            texto = message.content[1:]
+
+            # Dividir por el signo +
+            partes = texto.split("+")
+            if len(partes) == 2:
+                num1 = int(partes[0].strip())
+                num2 = int(partes[1].strip())
+                resultado = num1 + num2
+
+                if resultado > 200:
+                    await message.channel.send("Esa suma es demasiado alta para mí 😅")
+                else:
+                    await message.channel.send(f"{num1} + {num2} = {resultado}")
+            else:
+                await message.channel.send("Por favor escribe la suma así: $5 + 8")
+            return
+        except:
+            await message.channel.send("Solo puedo sumar números enteros, intenta de nuevo 🙂")
+            return
 
     # --- Comando $hello ---
     if message.content.startswith('$hello'):
@@ -61,5 +85,8 @@ async def on_message(message):
             await message.channel.send("❌ Todavía no tenemos esta palabra... Pero estamos trabajando en ello 🧠")
 
     else:
-        await message.channel.send("Comando no reconocido. Usa $hello, $bye, $pass <n> o $meme <PALABRA>")
+        # Puedes quitar esta línea si no quieres que responda a mensajes desconocidos
+        await message.channel.send("Comando no reconocido. Usa $hello, $bye, $pass <n>, $meme <PALABRA> o una suma como $5 + 8")
 
+# --- Ejecutar el bot ---
+client.run("TU_TOKEN_AQUI")  # ⚠️ Reemplaza con tu token real
